@@ -1,0 +1,11 @@
+<h1>Users</h1>
+<p *ngIf="usersStore.loading()">Loading...</p>
+<p *ngIf="usersStore.error()">{{usersStore.error()}}</p>
+
+<ul>
+    <li *ngFor="let u of usersStore.users(); trackBy: trackId">
+        <strong>{{ u.name }}</strong> — {{ u.email }}
+        <button (click)="delete(u.id)">Delete</button>
+       
+    </li>
+</ul>
