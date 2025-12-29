@@ -1,0 +1,22 @@
+<div style="display:flex; min-height:100vh;">
+    <aside style="width:220px; padding:16px; border-right:1px solid #ddd;">
+        <h3>Angular Dashboard</h3>
+
+        <nav style="display:flex; flex-direction:column; gap:8px; margin-top:16px;">
+            <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
+            <a routerLink="/users" routerLinkActive="active">Users</a>
+        </nav>
+    </aside>
+
+    <div style="flex:1;">
+        <header
+            style="display:flex; justify-content:space-between; align-items:center; padding:16px; border-bottom:1px solid #ddd;">
+            <span>{{ auth.user()?.email }}</span>
+            <button type="button" (click)="logout()">Logout</button>
+        </header>
+
+        <main style="padding:16px;">
+            <router-outlet></router-outlet>
+        </main>
+    </div>
+</div>

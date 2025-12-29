@@ -4,5 +4,5 @@ import { authGuard } from "../core/guards/auth.guard";
 
 
 export const USERS_ROUTES: Routes = [
-    {path: 'users', component: UsersComponent, canActivate:[authGuard]},
+    {path: 'users', component: UsersComponent},
 ];
