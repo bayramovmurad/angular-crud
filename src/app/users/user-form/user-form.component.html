@@ -1,28 +1,58 @@
-<h3>Create user</h3>
+<div class="rounded-2xl border bg-white p-4">
+    <div class="mb-3 flex items-center justify-between">
+        <h3 class="text-base font-semibold text-slate-900">
+            {{ mode === 'edit' ? 'Edit user' : 'Create user' }}
+        </h3>
 
-
-<form [formGroup]="form" (ngSubmit)="submit()">
-    <div>
-        <label>Name</label>
-        <input formControlName="name"  />
-        <small *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
-            Name is required (min 2 chars)
-        </small>
+        <span *ngIf="mode === 'edit'" class="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-700">
+            Edit mode
+        </span>
     </div>
 
-    <div>
-        <label>Email</label>
-        <input formControlName="email" />
-        <small *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
-            Email is required and must be valid
-        </small>
-    </div>
-    
-    <button type="submit" [disabled]="form.invalid">
-        {{mode === 'edit' ? 'Save' : 'Add'}}
-    </button>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="grid gap-3 md:grid-cols-2">
+        <!-- Name -->
+        <div class="md:col-span-1">
+            <label class="mb-1 block text-sm font-medium text-slate-700">Name</label>
+            <input formControlName="name" class="w-full rounded-xl border px-3 py-2 text-sm outline-none transition
+               focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                [class.border-red-300]="form.get('name')?.touched && form.get('name')?.invalid"
+                [class.focus:border-red-400]="form.get('name')?.touched && form.get('name')?.invalid"
+                [class.focus:ring-red-50]="form.get('name')?.touched && form.get('name')?.invalid"
+                placeholder="e.g. John Doe" />
+            <p *ngIf="form.get('name')?.touched && form.get('name')?.invalid" class="mt-1 text-xs text-red-600">
+                Name is required (min 2 chars)
+            </p>
+        </div>
 
-    <button *ngIf="mode === 'edit'" type="button" (click)="onCancel()">
-        Cancel
-    </button>
-</form>
+        <!-- Email -->
+        <div class="md:col-span-1">
+            <label class="mb-1 block text-sm font-medium text-slate-700">Email</label>
+            <input formControlName="email" class="w-full rounded-xl border px-3 py-2 text-sm outline-none transition
+               focus:border-slate-400 focus:ring-4 focus:ring-slate-100"
+                [class.border-red-300]="form.get('email')?.touched && form.get('email')?.invalid"
+                [class.focus:border-red-400]="form.get('email')?.touched && form.get('email')?.invalid"
+                [class.focus:ring-red-50]="form.get('email')?.touched && form.get('email')?.invalid"
+                placeholder="e.g. johndoe@example.com" />
+            <p *ngIf="form.get('email')?.touched && form.get('email')?.invalid" class="mt-1 text-xs text-red-600">
+                Email is required and must be valid
+            </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="md:col-span-2 mt-1 flex items-center gap-2">
+            <button type="submit" [disabled]="form.invalid" class="rounded-xl bg-slate-900 px-4 py-2 text-sm font-medium text-white
+               hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-60">
+                {{ mode === 'edit' ? 'Save changes' : 'Add user' }}
+            </button>
+
+            <button *ngIf="mode === 'edit'" type="button" (click)="onCancel()"
+                class="rounded-xl border px-4 py-2 text-sm hover:bg-slate-50">
+                Cancel
+            </button>
+
+            <span class="ml-auto text-xs text-slate-500">
+                {{ mode === 'edit' ? 'Editing selected user' : 'Creates user optimistically' }}
+            </span>
+        </div>
+    </form>
+</div>

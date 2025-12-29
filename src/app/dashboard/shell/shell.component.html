@@ -1,21 +1,50 @@
-<div style="display:flex; min-height:100vh;">
-    <aside style="width:220px; padding:16px; border-right:1px solid #ddd;">
-        <h3>Angular Dashboard</h3>
+<div class="min-h-screen bg-slate-50">
+    <!-- Top bar -->
+    <header class="sticky top-0 z-10 border-b bg-white">
+        <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
+            <div class="flex items-center gap-3">
+                <div class="h-9 w-9 rounded-xl bg-slate-900"></div>
+                <div>
+                    <div class="text-sm font-semibold text-slate-900">Angular Dashboard</div>
+                    <div class="text-xs text-slate-500">Auth + CRUD + Signals</div>
+                </div>
+            </div>
 
-        <nav style="display:flex; flex-direction:column; gap:8px; margin-top:16px;">
-            <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-            <a routerLink="/users" routerLinkActive="active">Users</a>
-        </nav>
-    </aside>
+            <div class="flex items-center gap-3">
+                <span class="hidden text-sm text-slate-600 sm:inline">
+                    {{ auth.user()?.email }}
+                </span>
+                <button type="button" (click)="logout()"
+                    class="rounded-xl bg-slate-900 px-3 py-2 text-sm font-medium text-white hover:bg-slate-800">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
 
-    <div style="flex:1;">
-        <header
-            style="display:flex; justify-content:space-between; align-items:center; padding:16px; border-bottom:1px solid #ddd;">
-            <span>{{ auth.user()?.email }}</span>
-            <button type="button" (click)="logout()">Logout</button>
-        </header>
+    <div class="mx-auto grid max-w-6xl grid-cols-1 gap-4 px-4 py-6 md:grid-cols-[240px_1fr]">
+        <!-- Sidebar -->
+        <aside class="rounded-2xl border bg-white p-3">
+            <nav class="flex flex-col gap-1">
+                <a routerLink="/dashboard" routerLinkActive="bg-slate-100 text-slate-900"
+                    class="rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    [routerLinkActiveOptions]="{ exact: true }">
+                    Dashboard
+                </a>
 
-        <main style="padding:16px;">
+                <a routerLink="/users" routerLinkActive="bg-slate-100 text-slate-900"
+                    class="rounded-xl px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+                    Users
+                </a>
+            </nav>
+
+            <div class="mt-4 rounded-xl bg-slate-50 p-3 text-xs text-slate-600">
+                Tip: Create / Edit users to test optimistic updates.
+            </div>
+        </aside>
+
+        <!-- Content -->
+        <main class="rounded-2xl border bg-white p-4">
             <router-outlet></router-outlet>
         </main>
     </div>
