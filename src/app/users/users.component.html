@@ -2,9 +2,20 @@
 <p *ngIf="usersStore.loading()">Loading...</p>
 <p *ngIf="usersStore.error()">{{usersStore.error()}}</p>
 
+<app-user-form 
+[mode]="editingUser() ? 'edit' : 'create'"
+[initialValue]="editingValue()"
+(create)="createUser($event)"
+(update)="saveEdit($event)"
+(cancel)="cancelEdit()"
+></app-user-form>
+<hr />
+
+
 <ul>
     <li *ngFor="let u of usersStore.users(); trackBy: trackId">
         <strong>{{ u.name }}</strong> — {{ u.email }}
+        <button (click)="startEdit(u)">Edit</button>
         <button (click)="delete(u.id)">Delete</button>
        
     </li>

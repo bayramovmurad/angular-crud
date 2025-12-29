@@ -1,0 +1,28 @@
+<h3>Create user</h3>
+
+
+<form [formGroup]="form" (ngSubmit)="submit()">
+    <div>
+        <label>Name</label>
+        <input formControlName="name"  />
+        <small *ngIf="form.get('name')?.touched && form.get('name')?.invalid">
+            Name is required (min 2 chars)
+        </small>
+    </div>
+
+    <div>
+        <label>Email</label>
+        <input formControlName="email" />
+        <small *ngIf="form.get('email')?.touched && form.get('email')?.invalid">
+            Email is required and must be valid
+        </small>
+    </div>
+    
+    <button type="submit" [disabled]="form.invalid">
+        {{mode === 'edit' ? 'Save' : 'Add'}}
+    </button>
+
+    <button *ngIf="mode === 'edit'" type="button" (click)="onCancel()">
+        Cancel
+    </button>
+</form>

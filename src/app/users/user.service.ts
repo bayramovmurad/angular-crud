@@ -20,10 +20,57 @@ export class UsersService {
 
   private baseUrl = 'https://jsonplaceholder.typicode.com/users';
 
-  fetchUsers(){
+  createUser(payload: { name: string; email: string }) {
+    this.error.set(null);
+
+    // optimistic
+    const tempId = Math.floor(Math.random() * 1_000_000) * 1;
+    const optimisticUser = { id: tempId, ...payload };
+
+
+    const prev = this._users();
+    this._users.set([optimisticUser, ...prev])
+
+    return this.http.post<any>(this.baseUrl, payload).pipe(
+      tap((res) => {
+        const newId = res?.id ?? Math.floor(Math.random() * 1_000_000);
+
+        this._users.update((list) =>
+          list.map((u) => u.id === tempId ? { ...u, id: newId } : u)
+        );
+      }),
+
+      catchError((err) => {
+        //rollback
+        this._users.set(prev);
+        this.error.set("created failed");
+        return of(null);
+      })
+    );
+  }
+
+  updateUser(id: number, payload: { name: string, email: string }) {
+    this.error.set(null);
+
+    const prev = this._users();
+
+    this._users.update(list =>
+      list.map(u => (u.id === id ? { ...u, ...payload } : u))
+    );
+
+    return this.http.patch(`${this.baseUrl}/${id}`, payload).pipe(
+      catchError(err => {
+        this._users.set(prev); //rollback
+        this.error.set("update failed");
+        return of(null)
+      })
+    );
+  }
+
+  fetchUsers() {
     this.loading.set(true);
     this.error.set(null);
-    
+
     return this.http.get<any[]>(this.baseUrl).pipe(
       tap((data) => {
         const mapped: User[] = data.map(u => ({
@@ -44,12 +91,12 @@ export class UsersService {
 
   // optimistic delete
 
-  deleteUser(id:number){
+  deleteUser(id: number) {
     const prev = this._users();
     this._users.set(prev.filter(u => u.id !== id));
 
     return this.http.delete(`${this.baseUrl}/${id}`).pipe(
-      catchError(err =>{
+      catchError(err => {
         //rollback
 
         this._users.set(prev);
