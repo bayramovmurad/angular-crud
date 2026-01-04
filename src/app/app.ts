@@ -12,6 +12,6 @@ export class AppComponent {
   private auth = inject(AuthService);
 
   constructor(){
-    this.auth.initFormStorage();
+    this.auth.initFromStorage();
   }
 }

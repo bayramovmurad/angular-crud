@@ -11,7 +11,7 @@ export class DashboardComponent {
   private http = inject(HttpClient);
 
   constructor() {
-    this.http.get('https://jsonplaceholder.typicode.com/todos/1')
+    this.http.get('/api/users')
       .subscribe(res => console.log('API', res));
   }
 }

@@ -18,38 +18,34 @@ export class UsersService {
 
   error = signal<string | null>(null);
 
-  private baseUrl = 'https://jsonplaceholder.typicode.com/users';
+  private baseUrl = '/api/users';
+
 
   createUser(payload: { name: string; email: string }) {
     this.error.set(null);
 
-    // optimistic
-    const tempId = Math.floor(Math.random() * 1_000_000) * 1;
+    const tempId = -Math.floor(Math.random() * 1_000_000); // update ve delete isleyir temp
     const optimisticUser = { id: tempId, ...payload };
 
-
     const prev = this._users();
-    this._users.set([optimisticUser, ...prev])
+    this._users.set([optimisticUser, ...prev]);
 
-    return this.http.post<any>(this.baseUrl, payload).pipe(
-      tap((res) => {
-        const newId = res?.id ?? Math.floor(Math.random() * 1_000_000);
-
+    return this.http.post<{ id: number; name: string; email: string }>(this.baseUrl, payload).pipe(
+      tap((created) => {
         this._users.update((list) =>
-          list.map((u) => u.id === tempId ? { ...u, id: newId } : u)
+          list.map((u) => (u.id === tempId ? created : u))
         );
       }),
-
-      catchError((err) => {
-        //rollback
+      catchError(() => {
         this._users.set(prev);
-        this.error.set("created failed");
+        this.error.set('Create failed');
         return of(null);
       })
     );
   }
 
-  updateUser(id: number, payload: { name: string, email: string }) {
+
+  updateUser(id: number, payload: { name: string; email: string }) {
     this.error.set(null);
 
     const prev = this._users();
@@ -58,11 +54,15 @@ export class UsersService {
       list.map(u => (u.id === id ? { ...u, ...payload } : u))
     );
 
-    return this.http.patch(`${this.baseUrl}/${id}`, payload).pipe(
-      catchError(err => {
-        this._users.set(prev); //rollback
-        this.error.set("update failed");
-        return of(null)
+    return this.http.put<{ id: number; name: string; email: string }>(`${this.baseUrl}/${id}`, payload).pipe(
+      tap((updated) => {
+        // backend response ilə sync (ən təmiz)
+        this._users.update(list => list.map(u => (u.id === id ? updated : u)));
+      }),
+      catchError(() => {
+        this._users.set(prev);
+        this.error.set('Update failed');
+        return of(null);
       })
     );
   }
@@ -96,14 +96,13 @@ export class UsersService {
     this._users.set(prev.filter(u => u.id !== id));
 
     return this.http.delete(`${this.baseUrl}/${id}`).pipe(
-      catchError(err => {
-        //rollback
-
+      catchError(() => {
         this._users.set(prev);
-        this.error.set("delete failed");
+        this.error.set('Delete failed');
         return of(null);
       })
     );
   }
+
 
 }

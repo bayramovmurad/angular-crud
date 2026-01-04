@@ -20,14 +20,17 @@ export class LoginComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
-  submit(){
-    if(this.form.invalid) return;
-    const { email, password } = this.form.value;
-   const ok = this.auth.login(email!, password!);
-    
-   if(ok){
-    this.router.navigate(["/dashboard"])
-   }
+  submit() {
+    if (this.form.invalid) return;
 
+    const { email, password } = this.form.value;
+
+    this.auth.login(email!, password!).subscribe({
+      next: () => this.router.navigate(['/dashboard']),
+      error: (err) => {
+        console.log('Login failed:', err.error?.message);
+        alert('Email or password is incorrect');
+      }
+    });
   }
-}
+};
